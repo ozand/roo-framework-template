@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "conport": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "greatscottymac/context-portal"
+      ],
+      "disabled": false,
+      "alwaysAllow": []
+    }
+  }
+}
