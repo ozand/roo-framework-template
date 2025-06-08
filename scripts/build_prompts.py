@@ -2,27 +2,46 @@ import yaml
 import os
 import glob
 
-# This script assembles system prompts from YAML modules.
-# It's a simplified version inspired by the 'greatscottymac-rooflow' project.
+# This script assembles system prompts from YAML modules and markdown components.
 
-FRAMEWORK_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'framework_files'))
-MODULES_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'modules'))
-ROO_DIR = os.path.join(FRAMEWORK_DIR, '.roo')
+# --- Configuration ---
+# Absolute path to the directory containing this script
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+# Assumes the script is in 'scripts' and 'framework_files', 'modules' are siblings
+ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
+MODULES_DIR = os.path.join(ROOT_DIR, 'modules')
+ROO_DIR = os.path.join(ROOT_DIR, 'framework_files', '.roo')
 
 def load_yaml_file(path):
+    """Loads a YAML file and returns its content as a dictionary."""
     if not os.path.exists(path):
-        print(f"WARNING: YAML file not found, skipping: {path}")
+        print(f"ERROR: YAML file not found, skipping: {path}")
         return {}
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            return yaml.safe_load(f) or {}
+    except Exception as e:
+        print(f"ERROR: Could not parse YAML file {path}: {e}")
+        return {}
+
+def read_component_file(path):
+    """Reads a text/markdown component file."""
+    if not os.path.exists(path):
+        print(f"ERROR: Component file not found: {path}")
+        return ""
     with open(path, 'r', encoding='utf-8') as f:
-        return yaml.safe_load(f) or {}
+        return f.read()
 
 def main():
+    """Main function to build prompts."""
     print("--- Starting Roo Framework Prompt Build Process ---")
 
-    # 1. Load core modules
-    print("Loading core modules...")
+    # 1. Load core modules that are always included
+    print("Loading core rule module...")
     core_rules = load_yaml_file(os.path.join(MODULES_DIR, 'core_rules.yml'))
-    # In a full implementation, more modules would be loaded here.
+    if not core_rules:
+        print("ERROR: Core rules are missing or empty. Aborting.")
+        return
 
     # 2. Find all mode manifests
     manifest_paths = glob.glob(os.path.join(ROO_DIR, 'modes', '*.manifest'))
@@ -36,37 +55,31 @@ def main():
     for manifest_path in manifest_paths:
         mode_slug = os.path.basename(manifest_path).replace('.manifest', '')
         print(f"Processing mode: {mode_slug}...")
-        
-        final_prompt = {}
+
+        # Start with core rules
+        final_prompt_content = yaml.dump(core_rules, default_flow_style=False, allow_unicode=True, sort_keys=False)
+
         with open(manifest_path, 'r', encoding='utf-8') as f:
             for line in f:
-                component_path = line.strip()
-                if not component_path or component_path.startswith('#'):
+                component_rel_path = line.strip()
+                if not component_rel_path or component_rel_path.startswith('#'):
                     continue
                 
-                # Simple logic to distinguish different component types
-                if 'core_rules.yml' in component_path:
-                    final_prompt.update(core_rules)
-                else:
-                    # For .md files, we'd read them and add as a string under a key
-                    # For this example, we assume all components are in modules for simplicity
-                    pass
-
+                # All paths in manifests are relative to the ROO_DIR
+                component_abs_path = os.path.join(ROO_DIR, component_rel_path.replace('.roo/', '', 1))
+                
+                file_content = read_component_file(component_abs_path)
+                if file_content:
+                    final_prompt_content += "\n\n" + file_content
+        
         # 4. Write the final assembled prompt
-        # This is a simplified logic. A real script would merge YAMLs deeply.
         output_file_path = os.path.join(ROO_DIR, f"system-prompt-{mode_slug}")
-        identity_path = os.path.join(ROO_DIR, f'system-prompt-flow-{mode_slug}')
-
-        final_content = ""
-        if os.path.exists(identity_path):
-            with open(identity_path, 'r', encoding='utf-8') as id_f:
-                final_content += id_f.read() + "\n\n"
-
-        final_content += yaml.dump(final_prompt, default_flow_style=False, allow_unicode=True, sort_keys=False)
-
-        with open(output_file_path, 'w', encoding='utf-8') as out_f:
-            out_f.write(final_content)
-        print(f"  -> Successfully generated: {output_file_path}")
+        try:
+            with open(output_file_path, 'w', encoding='utf-8') as out_f:
+                out_f.write(final_prompt_content)
+            print(f"  -> Successfully generated: {os.path.basename(output_file_path)}")
+        except IOError as e:
+            print(f"  -> ERROR: Failed to write prompt file: {e}")
 
     print("--- Prompt Build Process Finished ---")
 

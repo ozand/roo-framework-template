@@ -36,6 +36,9 @@ Write-Host "Copying framework files to your project..."
 # Copy .roo directory
 Copy-Item -Path "$RooDirSource" -Destination $DestDir -Recurse -Force
 
+# Copy .gitignore file
+Copy-Item -Path (Join-Path $TemplateFilesDir ".gitignore") -Destination $DestDir -Force
+
 # Copy .roomodes file
 Copy-Item -Path $RooModesSource -Destination $DestDir -Force
 
