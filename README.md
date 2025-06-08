@@ -1,29 +1,33 @@
 # My Agent Framework
 
-## Установка и Использование
+## Установка
 
-Этот репозиторий является **шаблоном**. Он не предназначен для прямого использования. Правильный процесс работы следующий:
+Этот репозиторий является **шаблоном**, который вы можете использовать для создания собственных проектов с AI-агентами.
 
-1.  **Создайте свой репозиторий из этого шаблона**, нажав кнопку "Use this template" на GitHub.
-2.  **Склонируйте ваш новый репозиторий** на локальную машину.
+### Пошаговая Инструкция
+
+1.  **Склонируйте этот репозиторий-шаблон** в удобное для вас место (например, `C:\Users\YourUser\Projects\templates`):
     ```bash
-    git clone [https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git)
+    git clone [https://github.com/ozand/roo-framework-template.git](https://github.com/ozand/roo-framework-template.git)
     ```
-3.  **Создайте новый проект**, в который вы хотите установить файлы фреймворка.
-    ```bash
-    mkdir my-new-agent-project
-    cd my-new-agent-project
+
+2.  **Создайте и перейдите в директорию для вашего нового проекта** (где будет жить ваш новый агент):
+    ```powershell
+    mkdir T:\Code\MyNewAgent
+    cd T:\Code\MyNewAgent
     ```
-4.  **Запустите установочный скрипт** из вашего локального клона шаблона, указав путь к нему.
+
+3.  **Запустите установочный скрипт**, указав полный или относительный путь к нему из директории шаблона.
 
 Windows (PowerShell)
 ```PowerShell
-# Замените <path-to-your-cloned-template> на актуальный путь
-<path-to-your-cloned-template>\scripts\install.ps1
+# Важно: Убедитесь, что политика выполнения PowerShell разрешает запуск скриптов.
+# Пример вызова скрипта из директории вашего нового проекта:
+T:\Code\python\RuRu\framework-template\scripts\install.ps1
 ```
 
 macOS / Linux
 ```Bash
-# Замените <path-to-your-cloned-template> на актуальный путь
-<path-to-your-cloned-template>/scripts/install.sh
+# Пример вызова скрипта из директории вашего нового проекта:
+/path/to/your/cloned/roo-framework-template/scripts/install.sh
 ```

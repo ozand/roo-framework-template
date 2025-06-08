@@ -11,6 +11,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TEMPLATE_FILES_DIR="$SCRIPT_DIR/../framework_files"
 DEST_DIR=$(pwd)
 
+# Sanity check: prevent running inside the template directory
+if [[ "$DEST_DIR" == "$SCRIPT_DIR"* ]]; then
+    echo "ERROR: Do not run this script from inside the template's own scripts directory."
+    echo "Please 'cd' to your new project directory and run the script from there."
+    exit 1
+fi
+
 echo "Template Source: $TEMPLATE_FILES_DIR"
 echo "Installation Target: $DEST_DIR"
 echo ""

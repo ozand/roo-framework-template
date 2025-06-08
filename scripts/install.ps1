@@ -11,6 +11,13 @@ $ScriptDir = $PSScriptRoot
 $TemplateFilesDir = Join-Path $ScriptDir "..\framework_files"
 $DestDir = Get-Location
 
+# Sanity check: prevent running inside the template directory
+if ($DestDir.Path -like "$($ScriptDir)*") {
+    Write-Error "ERROR: Do not run this script from inside the template's own scripts directory."
+    Write-Host "Please 'cd' to your new project directory and run the script from there."
+    exit 1
+}
+
 Write-Host "Template Source: $TemplateFilesDir"
 Write-Host "Installation Target: $($DestDir.Path)"
 Write-Host ""
