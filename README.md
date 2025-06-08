@@ -1,28 +1,29 @@
 # My Agent Framework
 
-## Installation
+## Установка и Использование
 
-### Safe Installation Method (Recommended)
-1. Download the framework:
-   ```bash
-   curl -L https://github.com/ozand/roo-framework-template/archive/main.zip -o framework.zip
-   ```
-2. Run the installer:
-   - Windows (PowerShell 5.0+ required):
-     ```PowerShell
-     .\scripts\install.cmd
-     ```
-   - macOS/Linux (bash 4.0+ required):
-     ```bash
-     chmod +x ./scripts/install.sh
-     ./scripts/install.sh
-     ```
+Этот репозиторий является **шаблоном**. Он не предназначен для прямого использования. Правильный процесс работы следующий:
 
-### Alternative Method (Git Clone)
-```bash
-git clone https://github.com/ozand/roo-framework-template.git
-cd roo-framework-template
-./scripts/install.sh
+1.  **Создайте свой репозиторий из этого шаблона**, нажав кнопку "Use this template" на GitHub.
+2.  **Склонируйте ваш новый репозиторий** на локальную машину.
+    ```bash
+    git clone [https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git)
+    ```
+3.  **Создайте новый проект**, в который вы хотите установить файлы фреймворка.
+    ```bash
+    mkdir my-new-agent-project
+    cd my-new-agent-project
+    ```
+4.  **Запустите установочный скрипт** из вашего локального клона шаблона, указав путь к нему.
+
+Windows (PowerShell)
+```PowerShell
+# Замените <path-to-your-cloned-template> на актуальный путь
+<path-to-your-cloned-template>\scripts\install.ps1
 ```
 
-**Security Note:** The safe installer uses temporary directories and verifies downloads before installation.
+macOS / Linux
+```Bash
+# Замените <path-to-your-cloned-template> на актуальный путь
+<path-to-your-cloned-template>/scripts/install.sh
+```
