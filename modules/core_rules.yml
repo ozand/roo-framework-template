@@ -1,15 +1,23 @@
 rules:
   R01_PathsAndCWD:
-    description: "Все пути к файлам должны быть относительными. Не используйте `~` или `$HOME`. Используйте `cd <dir> && command` для выполнения команд в определенной директории."
+    description: "All file paths must be relative to the project root. Do not use `~` or `$HOME`. Use `cd <dir> && command` to execute commands in a specific directory."
+  R03_EditingToolPreference:
+    description: "Prefer `apply_diff` for modifying existing files. Use `write_to_file` for new files or complete rewrites."
+  R04_WriteFileCompleteness:
+    description: "When using `write_to_file`, the content MUST be complete. No placeholders like `// ...` are allowed."
+  R11_CommandOutputAssumption:
+    description: "Assume `execute_command` succeeded if there is no output, unless the output is critical for the next step. Always verify outcomes."
+  R13_FileEditPreparation:
+    description: "Before editing an existing file, you MUST read its current content first using `read_file` to get correct line numbers and context for `apply_diff`."
   R14_FileEditErrorRecovery:
-    description: "Если `apply_diff` не удается с ошибкой 'File not found', повторите попытку с `write_to_file`. Для всех других ошибок модификации, вы должны перечитать файл с помощью `read_file` для анализа текущего состояния перед повторной попыткой модификации."
+    description: "If `apply_diff` fails with 'File not found', retry with `write_to_file`. For all other modification errors, you MUST re-read the file with `read_file` to analyze its current state before re-attempting the modification."
   R15_ErrorFeedbackAnalysis:
-    description: "Если вызов инструмента возвращает ошибку, ваш следующий блок <thinking> ДОЛЖЕН начинаться с секции [Error Analysis], цитирующей ошибку и формулирующей план по ее исправлению."
+    description: "If a tool call returns an error, your next <thinking> block MUST begin with an [Error Analysis] section, quoting the error and formulating a plan to fix it."
   R16_FailureLoopCircuitBreaker:
-    description: "Если вы 3 раза подряд получаете ошибку при работе с одним и тем же файлом, используя один и тот же инструмент, остановитесь. Ваш следующий шаг должен быть анализ корневой причины и применение кардинально другой стратегии. Если это не помогает, задайте уточняющий вопрос пользователю."
+    description: "If you receive an error 3 consecutive times for the same file with the same tool, stop. Your next step must be to analyze the root cause and apply a fundamentally different strategy. If that fails, ask the user for clarification."
   R17_PostExecutionVerification:
-    description: "После использования инструмента execute_command вы ОБЯЗАНЫ дождаться результата от пользователя. Категорически ЗАПРЕЩЕНО использовать attempt_completion в том же шаге, что и execute_command."
+    description: "After using `execute_command`, you MUST wait for the user's response containing the result. It is strictly FORBIDDEN to use `attempt_completion` in the same step as `execute_command`."
   R18_GitWorkflowSOP:
-    description: "При выполнении любых операций с Git, вы ОБЯЗАНЫ строго следовать процедуре, описанной в документе `sops/08_sop_git_workflow.md`."
+    description: "When performing any Git operations, you MUST strictly follow the procedure described in the `sops/08_sop_git_workflow.md` document."
   R19_PrincipleOfMinimalAction:
-    description: "Вы должны выполнять ТОЛЬКО ту задачу, которая была вам явно поставлена. Категорически ЗАПРЕЩЕНО добавлять новые файлы или изменять существующие, если это не является прямым шагом для выполнения текущей задачи. Любые предложения по улучшению должны быть сначала предложены пользователю для утвердания."
+    description: "You must ONLY perform the task that was explicitly assigned. It is strictly FORBIDDEN to add new files or modify existing ones if it is not a direct step for completing the current task. Any suggestions for improvement must first be proposed to the user for approval."

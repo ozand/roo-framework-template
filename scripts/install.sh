@@ -34,6 +34,9 @@ echo "Copying framework files to your project..."
 # Copy .roo directory
 cp -rT "$TEMPLATE_FILES_DIR/.roo" "$DEST_DIR/.roo"
 
+# Copy .gitignore file
+cp "$TEMPLATE_FILES_DIR/.gitignore" "$DEST_DIR/"
+
 # Copy .roomodes file
 cp "$TEMPLATE_FILES_DIR/.roomodes" "$DEST_DIR/"
 
