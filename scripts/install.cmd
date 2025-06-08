@@ -77,6 +77,15 @@ if (Test-Path $RooModesSource) {
     Copy-Item -Path $RooModesSource -Destination $DestDir -Force
 }
 
+# 4. Run the build script to assemble prompts from modules
+Write-Host "Assembling prompts from modules..."
+$BuildScriptPath = Join-Path $DestDir "scripts\build_prompts.py"
+if (Test-Path $BuildScriptPath) {
+    & python $BuildScriptPath
+} else {
+    Write-Warning "Build script not found at $BuildScriptPath. Prompts may not be assembled."
+}
+
 # 6. Cleanup
 Remove-Item -Path $TempDir -Recurse -Force
 

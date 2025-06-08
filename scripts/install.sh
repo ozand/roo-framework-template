@@ -1,53 +1,44 @@
 #!/usr/bin/env bash
-# Roo Framework Installer v2.0 (Safe Edition)
-# This script downloads the framework to a temporary directory, copies essential files, and then cleans up.
+# Roo Framework Installer v3.0 (Local Copy Edition)
+# This script copies essential framework files from a local template repository into the current directory.
 set -e
 
-# --- Configuration ---
-REPO_URL="https://github.com/ozand/roo-framework-template/archive/refs/heads/main.zip"
-
 # --- Main Logic ---
-echo "--- Roo Framework Safe Installer ---"
+echo "--- Roo Framework Installer ---"
 
-# 1. Define destination directory (where the user ran the script)
+# 1. Define Source and Destination Directories
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TEMPLATE_FILES_DIR="$SCRIPT_DIR/../framework_files"
 DEST_DIR=$(pwd)
+
+echo "Template Source: $TEMPLATE_FILES_DIR"
 echo "Installation Target: $DEST_DIR"
+echo ""
 
-# 2. Create a temporary directory
-TEMP_DIR=$(mktemp -d)
-# Ensure cleanup happens on script exit
-trap "rm -rf $TEMP_DIR" EXIT
-
-echo "Downloading framework to a temporary location..."
-
-# 3. Download and Unzip
-curl -L "$REPO_URL" -o "$TEMP_DIR/framework.zip"
-unzip -q "$TEMP_DIR/framework.zip" -d "$TEMP_DIR"
-
-# 4. Find the source directory (it's usually named 'repo-branch')
-# Use a wildcard to find the unzipped directory without hardcoding the branch name.
-SOURCE_DIR_PARENT=$(find "$TEMP_DIR" -mindepth 1 -maxdepth 1 -type d -name "*roo-framework-template*")
-FRAMEWORK_FILES_SOURCE="$SOURCE_DIR_PARENT/framework_files"
-
-if [ ! -d "$FRAMEWORK_FILES_SOURCE" ]; then
-    echo "ERROR: Could not find 'framework_files' in the downloaded archive. Installation aborted."
+# 2. Check if source files exist
+if [ ! -d "$TEMPLATE_FILES_DIR/.roo" ] || [ ! -f "$TEMPLATE_FILES_DIR/.roomodes" ]; then
+    echo "ERROR: Source framework files not found in '$TEMPLATE_FILES_DIR'. Ensure the template is intact. Installation aborted."
     exit 1
 fi
 
-# 5. Copy framework files to the destination directory
+# 3. Copy framework files to the destination directory
 echo "Copying framework files to your project..."
 
 # Copy .roo directory
-if [ -d "$FRAMEWORK_FILES_SOURCE/.roo" ]; then
-    cp -rT "$FRAMEWORK_FILES_SOURCE/.roo" "$DEST_DIR/.roo"
-fi
+cp -rT "$TEMPLATE_FILES_DIR/.roo" "$DEST_DIR/.roo"
 
 # Copy .roomodes file
-if [ -f "$FRAMEWORK_FILES_SOURCE/.roomodes" ]; then
-    cp "$FRAMEWORK_FILES_SOURCE/.roomodes" "$DEST_DIR/"
+cp "$TEMPLATE_FILES_DIR/.roomodes" "$DEST_DIR/"
+
+# 4. Run the build script to assemble prompts
+echo "Assembling prompts from modules..."
+BUILD_SCRIPT_PATH="$DEST_DIR/scripts/build_prompts.py"
+if [ -f "$BUILD_SCRIPT_PATH" ]; then
+    python3 "$BUILD_SCRIPT_PATH"
+else
+    echo "WARNING: Build script not found at $BUILD_SCRIPT_PATH. Prompts may not be assembled."
 fi
 
 echo ""
 echo "--- Installation Successful! ---"
-echo "The Roo framework has been installed in your project."
 echo "Please restart your IDE to activate the new modes."
