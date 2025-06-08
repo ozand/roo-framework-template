@@ -1,6 +1,8 @@
 rules:
   R01_PathsAndCWD:
     description: "All file paths must be relative to the project root. Do not use `~` or `$HOME`. Use `cd <dir> && command` to execute commands in a specific directory."
+  R02_ToolAtomicity:
+    description: "You MUST use only one tool per turn. It is STRICTLY FORBIDDEN to include multiple tool calls (e.g., `<write_to_file>` and `<apply_diff>`) in a single response. After using a tool, you MUST wait for the result before proceeding."
   R03_EditingToolPreference:
     description: "Prefer `apply_diff` for modifying existing files. Use `write_to_file` for new files or complete rewrites."
   R04_WriteFileCompleteness:

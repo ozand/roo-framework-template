@@ -50,9 +50,11 @@ def main():
 
     # 3. Check for orphaned files (files in components, rules, sops not in any manifest)
     print("\nChecking for orphaned (unreferenced) files...")
-    component_dirs = ['components', 'docs', 'rules', 'sops', 'rules-flow-architect', 'rules-flow-debug', 'rules-flow-orchestrator']
+    base_dirs = ['components', 'docs', 'rules', 'sops']
+    rule_flow_dirs = [d for d in os.listdir(ROO_DIR) if os.path.isdir(os.path.join(ROO_DIR, d)) and d.startswith('rules-flow-')]
+    component_dirs_to_scan = base_dirs + rule_flow_dirs
     all_existing_files = set()
-    for component_dir in component_dirs:
+    for component_dir in component_dirs_to_scan:
         search_path = os.path.join(ROO_DIR, component_dir, '**', '*')
         for f_path in glob.glob(search_path, recursive=True):
             if os.path.isfile(f_path):
@@ -60,7 +62,7 @@ def main():
 
     orphaned_files = all_existing_files - all_referenced_files
     if orphaned_files:
-        print("  -> WARNING: Found orphaned files not referenced in any manifest:")
+        print(f"  -> WARNING: Found {len(orphaned_files)} orphaned files not referenced in any manifest:")
         for orphan in sorted(list(orphaned_files)):
              # Show path relative to ROO_DIR for clarity
             print(f"    - {os.path.relpath(orphan, ROO_DIR)}")
