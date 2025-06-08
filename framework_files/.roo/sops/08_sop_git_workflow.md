@@ -22,6 +22,10 @@ All `execute_command` calls for `git` operations (e.g., `status`, `checkout`, `m
 </execute_command>
 ```
 
+### Step 2.5: Verify Merge Necessity
+
+Before attempting to merge a feature branch, verify that it contains commits that are not already in the target branch (e.g., `main`). Use the command `git log main..feature-branch`. If this command returns an empty output, the feature branch is already fully merged or redundant. In this case, the `merge` operation MUST be aborted, and the plan should proceed directly to the branch deletion step.
+
 ### Step 3: Manage Process Conflicts
 
 Before executing any Git command that modifies the working tree (`checkout`, `merge`, `rebase`, `stash`, `pull`), you MUST check for active MCP servers (like `conport`) that could be locking files.

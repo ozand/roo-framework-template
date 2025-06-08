@@ -1,36 +1,88 @@
 @echo off
-rem Framework Installer v1.0
-echo --- Framework Installer ---
+:: Roo Framework Installer v2.0 (Safe Edition) - PowerShell Loader
+:: This batch file simply ensures that the PowerShell script can be executed.
 
-rem 1. Define directories
-rem The directory where the script itself is located
-set "SCRIPT_DIR=%~dp0"
-rem Path to the framework files relative to the script
-set "TEMPLATE_DIR=%SCRIPT_DIR%..\framework_files"
-rem The target directory is where the user ran the script from
-set "DEST_DIR=%CD%"
+ECHO --- Roo Framework Safe Installer ---
+ECHO This will run a PowerShell script to safely install the framework.
 
-echo Template source: %TEMPLATE_DIR%
-echo Installation target: %DEST_DIR%
-echo.
+FOR /F "tokens=*" %%P IN ('powershell -NoProfile -ExecutionPolicy Bypass -Command "(Get-Variable PSVersionTable -ValueOnly).PSVersion.Major"') DO SET PS_VERSION=%%P
 
-rem 2. Check that the template files are in place
-if not exist "%TEMPLATE_DIR%\.roo" (
-echo ERROR: .roo directory not found. Installation aborted.
-exit /b 1
-)
-if not exist "%TEMPLATE_DIR%\.roomodes" (
-echo ERROR: .roomodes file not found. Installation aborted.
-exit /b 1
+IF NOT "%PS_VERSION%" GEQ "5" (
+    ECHO ERROR: PowerShell 5.0 or higher is required.
+    ECHO Please update PowerShell and try again.
+    GOTO :eof
 )
 
-rem 3. Copy framework files to the destination directory
-echo Copying .roo directory...
-xcopy /E /I /Y "%TEMPLATE_DIR%\.roo" "%DEST_DIR%\.roo"
+:: Execute the PowerShell script content embedded within this batch file
+powershell -NoProfile -ExecutionPolicy Bypass -Command ". { [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12; $script = (Get-Content '%~f0' | Out-String); iex ($script.Substring($script.IndexOf('BEGIN_POWERSHELL_SCRIPT') + 25)) }"
+GOTO :eof
 
-echo Copying .roomodes file...
-copy /Y "%TEMPLATE_DIR%\.roomodes" "%DEST_DIR%\"
+<#
+.SYNOPSIS
+    Safely installs the Roo Framework by downloading it to a temporary location and copying only essential files.
 
-echo.
-echo --- Installation successful! ---
-echo Please restart your IDE to activate the new modes.
+.DESCRIPTION
+    This script performs the following actions:
+    1. Creates a unique temporary directory.
+    2. Downloads the latest version of the framework from GitHub as a ZIP archive.
+    3. Extracts the archive.
+    4. Copies the necessary framework files (.roo directory and .roomodes file) into the current directory.
+    5. Cleans up by deleting the temporary directory and downloaded archive.
+
+BEGIN_POWERSHELL_SCRIPT
+
+$ErrorActionPreference = 'Stop'
+
+# --- Configuration ---
+$RepoUrl = "https://github.com/ozand/roo-framework-template/archive/refs/heads/main.zip"
+
+# --- Main Logic ---
+$DestDir = Get-Location
+Write-Host "Installation Target: $($DestDir.Path)"
+
+# 2. Create a temporary directory
+$TempDir = Join-Path $env:TEMP $([System.Guid]::NewGuid().ToString())
+New-Item -ItemType Directory -Path $TempDir | Out-Null
+
+Write-Host "Downloading framework to a temporary location..."
+
+# 3. Download and Unzip
+$ZipFile = Join-Path $TempDir "framework.zip"
+Invoke-WebRequest -Uri $RepoUrl -OutFile $ZipFile
+Expand-Archive -Path $ZipFile -DestinationPath $TempDir
+
+# 4. Find the source directory
+$SourceDirParent = Get-ChildItem -Path $TempDir -Directory -Filter "*roo-framework-template*" | Select-Object -First 1
+if (-not $SourceDirParent) {
+    Write-Error "Could not find framework directory in the downloaded archive. Installation aborted."
+    exit 1
+}
+$FrameworkFilesSource = Join-Path $SourceDirParent.FullName "framework_files"
+
+if (-not (Test-Path $FrameworkFilesSource)) {
+    Write-Error "Could not find 'framework_files' in the downloaded archive. Installation aborted."
+    exit 1
+}
+
+# 5. Copy framework files
+Write-Host "Copying framework files to your project..."
+
+$RooDirSource = Join-Path $FrameworkFilesSource ".roo"
+if (Test-Path $RooDirSource) {
+    Copy-Item -Path "$RooDirSource\*" -Destination $DestDir -Recurse -Force
+}
+
+$RooModesSource = Join-Path $FrameworkFilesSource ".roomodes"
+if (Test-Path $RooModesSource) {
+    Copy-Item -Path $RooModesSource -Destination $DestDir -Force
+}
+
+# 6. Cleanup
+Remove-Item -Path $TempDir -Recurse -Force
+
+Write-Host ""
+Write-Host "--- Installation Successful! ---"
+Write-Host "The Roo framework has been installed in your project."
+Write-Host "Please restart your IDE to activate the new modes."
+
+#>
