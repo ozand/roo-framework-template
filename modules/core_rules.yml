@@ -23,3 +23,7 @@ rules:
     description: "When performing any Git operations, you MUST strictly follow the procedure described in the `sops/08_sop_git_workflow.md` document."
   R19_PrincipleOfMinimalAction:
     description: "You must ONLY perform the task that was explicitly assigned. It is strictly FORBIDDEN to add new files or modify existing ones if it is not a direct step for completing the current task. Any suggestions for improvement must first be proposed to the user for approval."
+  R20_NewFileCreation:
+    description: "For creating a new file with content, you MUST use `write_to_file`. This tool automatically creates parent directories, preventing 'path not found' errors. This is more robust and efficient than using `create_new_file` which requires a separate command to create directories."
+  R21_CompletionSummary:
+    description: "Before using `attempt_completion`, your final `<thinking>` block MUST be a summary of the actions you successfully executed during the task. It should act as a changelog for your work. Do not re-analyze the initial state; reflect on what you have accomplished."

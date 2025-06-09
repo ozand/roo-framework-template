@@ -1,6 +1,7 @@
 import yaml
 import os
 import glob
+import json
 
 # This script assembles system prompts from YAML modules and markdown components.
 
@@ -11,6 +12,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
 MODULES_DIR = os.path.join(ROOT_DIR, 'modules')
 ROO_DIR = os.path.join(ROOT_DIR, 'framework_files', '.roo')
+ROOMODES_PATH = os.path.join(ROOT_DIR, 'framework_files', '.roomodes')
 
 def load_yaml_file(path):
     """Loads a YAML file and returns its content as a dictionary."""
@@ -51,6 +53,8 @@ def main():
 
     print(f"Found {len(manifest_paths)} modes to process.")
 
+    roomodes_config = {"modes": []}
+
     # 3. Process each mode
     for manifest_path in manifest_paths:
         mode_slug = os.path.basename(manifest_path).replace('.manifest', '')
@@ -81,7 +85,23 @@ def main():
         except IOError as e:
             print(f"  -> ERROR: Failed to write prompt file: {e}")
 
-    print("--- Prompt Build Process Finished ---")
+        # Add entry for .roomodes
+        roomodes_config["modes"].append({
+            "id": mode_slug,
+            "name": mode_slug.replace('-', ' ').title(),
+            "systemPromptFile": f".roo/system-prompt-{mode_slug}"
+        })
+
+    # 4. Generate the .roomodes file
+    print("\nGenerating .roomodes file...")
+    try:
+        with open(ROOMODES_PATH, 'w', encoding='utf-8') as f:
+            json.dump(roomodes_config, f, indent=2)
+        print(f"  -> Successfully generated: {os.path.basename(ROOMODES_PATH)}")
+    except IOError as e:
+        print(f"  -> ERROR: Failed to write .roomodes file: {e}")
+
+    print("\n--- Prompt Build Process Finished ---")
 
 if __name__ == "__main__":
     main()
