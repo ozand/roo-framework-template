@@ -42,6 +42,9 @@ Copy-Item -Path (Join-Path $TemplateFilesDir ".gitignore") -Destination $DestDir
 # Copy .roomodes file
 Copy-Item -Path $RooModesSource -Destination $DestDir -Force
 
+# Copy scripts directory
+Copy-Item -Path (Join-Path $ScriptDir "..\scripts") -Destination $DestDir -Recurse -Force
+
 # 4. Run the build script to assemble prompts from modules
 Write-Host "Assembling prompts from modules..."
 $BuildScriptPath = Join-Path $DestDir "scripts\build_prompts.py"
