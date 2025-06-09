@@ -6,7 +6,7 @@ import glob
 # --- Configuration ---
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
-ROO_DIR = os.path.join(ROOT_DIR, 'framework_files', '.roo')
+ROO_DIR = os.path.join(ROOT_DIR, '.roo')
 MODES_DIR = os.path.join(ROO_DIR, 'modes')
 
 ALL_COMPONENTS = set()

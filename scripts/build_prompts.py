@@ -11,8 +11,8 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 # Assumes the script is in 'scripts' and 'framework_files', 'modules' are siblings
 ROOT_DIR = os.path.abspath(os.path.join(SCRIPT_DIR, '..'))
 MODULES_DIR = os.path.join(ROOT_DIR, 'modules')
-ROO_DIR = os.path.join(ROOT_DIR, 'framework_files', '.roo')
-ROOMODES_PATH = os.path.join(ROOT_DIR, 'framework_files', '.roomodes')
+ROO_DIR = os.path.join(ROOT_DIR, '.roo')
+ROOMODES_PATH = os.path.join(ROOT_DIR, '.roomodes')
 
 def load_yaml_file(path):
     """Loads a YAML file and returns its content as a dictionary."""
