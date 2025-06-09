@@ -43,6 +43,12 @@ cp "$TEMPLATE_FILES_DIR/.roomodes" "$DEST_DIR/"
 # Copy scripts directory
 cp -r "$SCRIPT_DIR/../scripts" "$DEST_DIR/"
 
+# Copy modules directory
+cp -r "$SCRIPT_DIR/../modules" "$DEST_DIR/"
+
+# Copy guides directory
+cp -r "$SCRIPT_DIR/../guides" "$DEST_DIR/"
+
 # 4. Run the build script to assemble prompts
 echo "Assembling prompts from modules..."
 BUILD_SCRIPT_PATH="$DEST_DIR/scripts/build_prompts.py"

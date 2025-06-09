@@ -45,6 +45,12 @@ Copy-Item -Path $RooModesSource -Destination $DestDir -Force
 # Copy scripts directory
 Copy-Item -Path (Join-Path $ScriptDir "..\scripts") -Destination $DestDir -Recurse -Force
 
+# Copy modules directory
+Copy-Item -Path (Join-Path $ScriptDir "..\modules") -Destination (Join-Path $DestDir "modules") -Recurse -Force
+
+# Copy guides directory
+Copy-Item -Path (Join-Path $ScriptDir "..\guides") -Destination (Join-Path $DestDir "guides") -Recurse -Force
+
 # 4. Run the build script to assemble prompts from modules
 Write-Host "Assembling prompts from modules..."
 $BuildScriptPath = Join-Path $DestDir "scripts\build_prompts.py"
