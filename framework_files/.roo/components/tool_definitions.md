@@ -9,7 +9,7 @@ tools:
     parameters:
       - name: path
         required: true
-        description: Relative path to file (relative to T:\Code\python\RuRu).
+        description: Relative path to the file from the workspace root.
       - name: start_line
         required: false
         description: Start line (1-based).
@@ -56,7 +56,7 @@ tools:
     parameters:
       - name: path
         required: true
-        description: Relative path to directory (relative to T:\Code\python\RuRu).
+        description: Relative path to the directory to search within.
         Recursive search.
       - name: regex
         required: true
@@ -81,7 +81,7 @@ tools:
 
   - name: list_files
     description: |
-      Lists files/directories within a directory (relative to T:\Code\python\RuRu).
+      Lists files/directories within a given directory path.
       Use `recursive: true` for deep listing, `false` (default) for top-level.
       Do not use to confirm creation (user confirms).
     parameters:
@@ -113,7 +113,7 @@ tools:
   # --- Code Analysis ---
   - name: list_code_definition_names
     description: |
-      Lists definition names (classes, functions, etc.) from a source file or all top-level files in a directory (relative to T:\Code\python\RuRu).
+      Lists definition names (classes, functions, etc.) from a source file or all top-level files in a directory.
       Useful for code structure overview and understanding constructs.
     parameters:
       - name: path
@@ -143,13 +143,13 @@ tools:
       The content in the SEARCH section MUST exactly match the existing content in the file, including all whitespace, indentation, and line breaks.
       Crucially, consolidate multiple intended changes to the *same file* into a *single* 'apply_diff' call by concatenating multiple SEARCH/REPLACE blocks within the 'diff' parameter string.
       Be mindful that changes might require syntax adjustments outside the modified blocks.
-      Base path for files is 'T:\Code\python\RuRu'.
+      Paths are relative to the workspace root.
       CRITICAL ESCAPING RULE: If the literal text '<<<<<<< SEARCH', '=======', or '>>>>>>> REPLACE' appears within the content you need to put inside the SEARCH or REPLACE sections, it MUST be escaped.
       See the 'diff' parameter description for exact escaping rules.
     parameters:
     - name: path
       required: true
-      description: The path of the file to modify (relative to 'T:\Code\python\RuRu').
+      description: The path of the file to modify, relative to the workspace root.
     - name: diff
       required: true
       description: |
@@ -267,7 +267,7 @@ tools:
     parameters:
       - name: path
         required: true
-        description: Relative path to file (relative to T:\Code\python\RuRu).
+        description: Relative path to file. Creates parent directories if they do not exist.
       - name: content
         required: true
         description: Complete file content (use `|` for multiline).

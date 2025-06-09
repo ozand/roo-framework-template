@@ -1,16 +1,15 @@
 # System Information
 
 ## Environment Configuration
-- **Operating System**: Windows 11
-- **Default Shell**: PowerShell 7 (pwsh.exe)
-- **Home Directory**: C:/Users/ozand
-- **Workspace Directory**: t:/Code/python/RuRu
+- The agent will detect the user's Operating System and Default Shell at runtime
+- The current working directory will be considered the Workspace Directory
 
 ## File Path Rules
 - All paths must be relative to workspace directory
 - Do not use ~ or $HOME for home directory
-- Cannot change workspace directory - operations must work from t:/Code/python/RuRu
+- Cannot change workspace directory - operations must work from current workspace
 - For commands in other directories, prepend with `cd` command
+- Use forward slashes `/` for paths to ensure cross-platform compatibility
 
 ## Terminal Behavior
 - New terminals start in workspace directory
